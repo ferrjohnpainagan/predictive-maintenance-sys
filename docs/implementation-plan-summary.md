@@ -1,16 +1,19 @@
 # Implementation Plan Summary - Predictive Maintenance System
 
 ## Overview
+
 This document provides a comprehensive overview of all implementation plans for the predictive maintenance system, including dependencies and coordination points between different components.
 
 ## Implementation Plans Overview
 
 ### 1. 📄 Frontend Implementation Plan
-**Location**: `frontend/docs/implementation-plan.md`  
+
+**Location**: [frontend/docs/implementation-plan.md](../frontend/docs/implementation-plan.md)  
 **Duration**: 7-9 weeks  
 **Technology**: Next.js, TypeScript, Tailwind CSS, React Query
 
 **Key Phases**:
+
 - Phase 1: Project Setup (3-4 days)
 - Phase 2: Core Components (4-5 days)
 - Phase 3: Fleet View Implementation (5-6 days)
@@ -25,11 +28,13 @@ This document provides a comprehensive overview of all implementation plans for 
 ---
 
 ### 2. 📄 NestJS API Gateway Implementation Plan
-**Location**: `backend/api-gateway/docs/implementation-plan.md`  
+
+**Location**: [backend/api-gateway/docs/implementation-plan.md](../backend/api-gateway/docs/implementation-plan.md)  
 **Duration**: 5-7 weeks  
 **Technology**: NestJS, TypeScript, Supabase, gRPC
 
 **Key Phases**:
+
 - Phase 1: Project Setup (2-3 days)
 - Phase 2: Core Infrastructure (3-4 days)
 - Phase 3: Supabase Integration (4-5 days)
@@ -37,18 +42,20 @@ This document provides a comprehensive overview of all implementation plans for 
 - Phase 5: API Endpoints (5-6 days)
 - Phase 6: Performance Optimization (3-4 days)
 - Phase 7: Testing (4-5 days)
-- Phase 8: Deployment *(references Infrastructure plan)*
+- Phase 8: Deployment _(references [Infrastructure plan](../infrastructure/docs/implementation-plan.md))_
 
 **Dependencies**: Infrastructure setup, ML service gRPC interface
 
 ---
 
 ### 3. 📄 Python ML Service Implementation Plan
-**Location**: `backend/ml-service/docs/implementation-plan.md`  
+
+**Location**: [backend/ml-service/docs/implementation-plan.md](../backend/ml-service/docs/implementation-plan.md)  
 **Duration**: 6-7 weeks  
 **Technology**: Python, FastAPI, TensorFlow, gRPC, SageMaker
 
 **Key Phases**:
+
 - Phase 1: Project Setup (2-3 days)
 - Phase 2: Data Processing Pipeline (4-5 days)
 - Phase 3: Model Development (5-6 days)
@@ -56,25 +63,27 @@ This document provides a comprehensive overview of all implementation plans for 
 - Phase 5: Inference Service (4-5 days)
 - Phase 6: FastAPI REST Interface (3-4 days)
 - Phase 7: Testing (4-5 days)
-- Phase 8: Deployment *(references Infrastructure plan)*
+- Phase 8: Deployment _(references [Infrastructure plan](../infrastructure/docs/implementation-plan.md))_
 
 **Dependencies**: Data pipeline, SageMaker setup, infrastructure
 
 ---
 
 ### 4. 📄 MLOps & SageMaker Pipeline Implementation Plan
-**Location**: `mlops/docs/implementation-plan.md`  
+
+**Location**: [mlops/docs/implementation-plan.md](../mlops/docs/implementation-plan.md)  
 **Duration**: 6-7 weeks  
 **Technology**: AWS SageMaker, MLflow, Pipelines
 
 **Key Phases**:
+
 - Phase 1: SageMaker Environment Setup (3-4 days)
-- Phase 2: Data Processing *(references Data Pipeline plan)*
+- Phase 2: Data Processing _(references [Data Pipeline plan](../data/docs/implementation-plan.md))_
 - Phase 3: Model Training Pipeline (5-6 days)
 - Phase 4: Model Evaluation (3-4 days)
 - Phase 5: Model Registry & Deployment (4-5 days)
 - Phase 6: Pipeline Orchestration (4-5 days)
-- Phase 7: Model Monitoring *(references Monitoring plan)*
+- Phase 7: Model Monitoring _(references [Monitoring plan](../monitoring/docs/implementation-plan.md))_
 - Phase 8: Production Operations (3-4 days)
 
 **Dependencies**: AWS account, data pipeline, monitoring setup
@@ -82,11 +91,13 @@ This document provides a comprehensive overview of all implementation plans for 
 ---
 
 ### 5. 📄 Infrastructure as Code Implementation Plan
-**Location**: `infrastructure/docs/implementation-plan.md`  
+
+**Location**: [infrastructure/docs/implementation-plan.md](../infrastructure/docs/implementation-plan.md)  
 **Duration**: 4-6 weeks  
 **Technology**: Terraform, AWS, Docker, GitHub Actions
 
 **Key Phases**:
+
 - Phase 1: Foundation & Prerequisites (2-3 days)
 - Phase 2: Network Infrastructure (3-4 days)
 - Phase 3: Compute Infrastructure (4-5 days)
@@ -101,11 +112,13 @@ This document provides a comprehensive overview of all implementation plans for 
 ---
 
 ### 6. 📄 Data Pipeline Implementation Plan
-**Location**: `data/docs/implementation-plan.md`  
+
+**Location**: [data/docs/implementation-plan.md](../data/docs/implementation-plan.md)  
 **Duration**: 3-4 weeks  
 **Technology**: Apache Airflow, Kinesis, Great Expectations
 
 **Key Phases**:
+
 - Phase 1: Data Architecture Setup (3-4 days)
 - Phase 2: C-MAPSS Dataset Ingestion (3-4 days)
 - Phase 3: Real-time Data Simulation (4-5 days)
@@ -117,11 +130,13 @@ This document provides a comprehensive overview of all implementation plans for 
 ---
 
 ### 7. 📄 Monitoring & Observability Implementation Plan
-**Location**: `monitoring/docs/implementation-plan.md`  
+
+**Location**: [monitoring/docs/implementation-plan.md](../monitoring/docs/implementation-plan.md)  
 **Duration**: 3-4 weeks  
 **Technology**: CloudWatch, Grafana, X-Ray, Prometheus
 
 **Key Phases**:
+
 - Phase 1: Observability Foundation (3-4 days)
 - Phase 2: Application Performance Monitoring (4-5 days)
 - Phase 3: Infrastructure Monitoring (3-4 days)
@@ -137,59 +152,75 @@ This document provides a comprehensive overview of all implementation plans for 
 ### 🔄 Key Integration Points
 
 1. **Infrastructure → All Services**
+
    - Infrastructure plan provides foundation for all other services
    - Docker, ECS, networking, and CI/CD setup used by all applications
 
 2. **Data Pipeline → MLOps**
+
    - Data pipeline provides preprocessed data for ML training
    - Quality metrics feed into model monitoring
 
 3. **MLOps → ML Service**
+
    - Trained models deployed to ML service
    - Model registry integration for version management
 
 4. **ML Service → API Gateway**
+
    - gRPC interface defined jointly
    - Protocol buffer schemas shared between services
 
 5. **API Gateway → Frontend**
+
    - REST API specifications coordinate development
    - Authentication and data contracts aligned
 
 6. **Monitoring → All Components**
+
    - Centralized logging and metrics collection
    - Alert routing and incident management
 
 ### 📅 Recommended Implementation Order
 
 #### Phase A: Foundation (Weeks 1-4)
-1. **Start with Infrastructure as Code** (Week 1-2)
+
+1. **Start with [Infrastructure as Code](../infrastructure/docs/implementation-plan.md)** (Week 1-2)
+
    - Critical foundation for all other services
    - Provides AWS environment, networking, CI/CD
 
-2. **Set up Data Pipeline** (Week 2-3)
+2. **Set up [Data Pipeline](../data/docs/implementation-plan.md)** (Week 2-3)
+
    - Provides data foundation for ML development
    - Establishes data quality framework
 
-3. **Begin Monitoring Setup** (Week 3-4)
+3. **Begin [Monitoring Setup](../monitoring/docs/implementation-plan.md)** (Week 3-4)
+
    - Early monitoring helps debug other services
    - Provides observability from day one
 
 #### Phase B: Core Services (Weeks 3-8)
-4. **Start MLOps Pipeline** (Week 3-6)
+
+4. **Start [MLOps Pipeline](../mlops/docs/implementation-plan.md)** (Week 3-6)
+
    - Can run in parallel with infrastructure
    - Depends on data pipeline for data
 
-5. **Develop ML Service** (Week 4-8)
+5. **Develop [ML Service](../backend/ml-service/docs/implementation-plan.md)** (Week 4-8)
+
    - Depends on MLOps for trained models
    - Can start with mock models
 
-6. **Build API Gateway** (Week 5-9)
+6. **Build [API Gateway](../backend/api-gateway/docs/implementation-plan.md)** (Week 5-9)
+
    - Depends on ML service gRPC interface
    - Can start with mock ML responses
 
 #### Phase C: Frontend & Integration (Weeks 6-12)
-7. **Develop Frontend** (Week 6-12)
+
+7. **Develop [Frontend](../frontend/docs/implementation-plan.md)** (Week 6-12)
+
    - Depends on API Gateway for specifications
    - Can start with mock API responses
 
@@ -200,6 +231,7 @@ This document provides a comprehensive overview of all implementation plans for 
 ### 🏃‍♂️ Parallel Development Strategy
 
 **Services that can be developed in parallel**:
+
 - Infrastructure + Data Pipeline (after week 1)
 - MLOps + Monitoring setup (after week 2)
 - ML Service + API Gateway (after week 4, with interface contracts)
@@ -211,6 +243,7 @@ Infrastructure → Data Pipeline → MLOps → ML Service → API Gateway → Fr
 ### 📋 Cross-Team Coordination Requirements
 
 #### Weekly Coordination Meetings
+
 - **Infrastructure Team**: Updates on AWS resources, networking
 - **Data Team**: Data pipeline status, quality metrics
 - **ML Team**: Model training progress, performance metrics
@@ -218,6 +251,7 @@ Infrastructure → Data Pipeline → MLOps → ML Service → API Gateway → Fr
 - **Frontend Team**: UI/UX progress, API integration
 
 #### Shared Artifacts
+
 - **API Specifications**: OpenAPI docs for REST APIs
 - **gRPC Protocols**: Protocol buffer definitions
 - **Data Schemas**: Database and data format specifications
@@ -227,6 +261,7 @@ Infrastructure → Data Pipeline → MLOps → ML Service → API Gateway → Fr
 ### 🎯 Success Criteria for Full System
 
 **Technical KPIs**:
+
 - All services deployed and operational
 - End-to-end prediction flow working
 - < 200ms API response time (P95)
@@ -235,6 +270,7 @@ Infrastructure → Data Pipeline → MLOps → ML Service → API Gateway → Fr
 - Complete monitoring and alerting coverage
 
 **Operational KPIs**:
+
 - Automated CI/CD for all services
 - Data quality monitoring active
 - Model retraining pipeline functional
@@ -255,9 +291,10 @@ Infrastructure → Data Pipeline → MLOps → ML Service → API Gateway → Fr
 ## Plan Cross-References
 
 Each plan now references others where there are overlaps:
-- **Deployment sections** → Infrastructure as Code plan
-- **Monitoring sections** → Monitoring & Observability plan  
-- **Data processing** → Data Pipeline plan
-- **Model training** → MLOps SageMaker plan
+
+- **Deployment sections** → [Infrastructure as Code plan](../infrastructure/docs/implementation-plan.md)
+- **Monitoring sections** → [Monitoring & Observability plan](../monitoring/docs/implementation-plan.md)
+- **Data processing** → [Data Pipeline plan](../data/docs/implementation-plan.md)
+- **Model training** → [MLOps SageMaker plan](../mlops/docs/implementation-plan.md)
 
 This reduces duplication while maintaining clear ownership and detailed implementation guidance for each component.
