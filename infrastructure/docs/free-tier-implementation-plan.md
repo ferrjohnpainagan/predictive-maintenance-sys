@@ -9,7 +9,8 @@ Implementation plan for building the complete predictive maintenance system infr
 - **IaC Tools**: Terraform
 - **Cloud Providers**: AWS (Free Tier), Supabase, Vercel
 - **Compute**: EC2 t2.micro instances (Free Tier eligible)
-- **Storage**: S3 (5GB free), RDS t2.micro (Free Tier eligible)
+- **Storage**: S3 (5GB free) for ML data only, Supabase for application data
+- **Database**: Supabase PostgreSQL (Free tier: 500MB, 2 projects)
 - **CI/CD**: GitHub Actions
 - **Secret Management**: GitHub Secrets, environment files
 - **Monitoring**: Basic CloudWatch (Free Tier)
@@ -17,8 +18,8 @@ Implementation plan for building the complete predictive maintenance system infr
 ## Free Tier Limits & Constraints
 
 - **EC2**: 750 hours/month of t2.micro (1 vCPU, 1GB RAM)
-- **S3**: 5GB storage, 20K GET requests, 2K PUT requests
-- **RDS**: 750 hours/month of db.t2.micro
+- **S3**: 5GB storage, 20K GET requests, 2K PUT requests (ML data only)
+- **Supabase**: 500MB database, 2 projects, 1GB file storage
 - **CloudWatch**: Basic metrics, 5GB logs
 - **Data Transfer**: 15GB outbound free
 
@@ -312,40 +313,41 @@ Implementation plan for building the complete predictive maintenance system infr
 
 ---
 
-## Phase 4: Storage & Database (Free Tier)
+## Phase 4: Storage Configuration (Free Tier)
 
-**Duration**: 2-3 days  
+**Duration**: 1-2 days  
 **Priority**: Medium
 
 ### Objectives
 
-- Set up S3 for data storage
-- Configure RDS database
-- Implement backup strategy
+- Set up S3 for ML data storage (not application data)
+- Configure Supabase integration
+- Implement data backup strategy
 
 ### Tasks
 
-1. **S3 Configuration**
+1. **S3 Configuration for ML Data**
 
    ```hcl
    # modules/storage/s3.tf
-   resource "aws_s3_bucket" "data" {
-     bucket = "${var.project}-${var.environment}-data"
+   resource "aws_s3_bucket" "ml_data" {
+     bucket = "${var.project}-${var.environment}-ml-data"
 
      tags = {
-       Name = "${var.project}-${var.environment}-data"
+       Name = "${var.project}-${var.environment}-ml-data"
+       Purpose = "ML model artifacts, training data, logs"
      }
    }
 
-   resource "aws_s3_bucket_versioning" "data" {
-     bucket = aws_s3_bucket.data.id
+   resource "aws_s3_bucket_versioning" "ml_data" {
+     bucket = aws_s3_bucket.ml_data.id
      versioning_configuration {
        status = "Enabled"
      }
    }
 
-   resource "aws_s3_bucket_lifecycle_configuration" "data" {
-     bucket = aws_s3_bucket.data.id
+   resource "aws_s3_bucket_lifecycle_configuration" "ml_data" {
+     bucket = aws_s3_bucket.ml_data.id
 
      rule {
        id     = "free_tier_optimization"
@@ -364,43 +366,38 @@ Implementation plan for building the complete predictive maintenance system infr
    }
    ```
 
-2. **RDS Database**
+2. **Supabase Integration Setup**
 
    ```hcl
-   # modules/database/rds.tf
-   resource "aws_db_instance" "main" {
-     identifier = "${var.project}-${var.environment}-db"
+   # modules/integration/supabase.tf
+   # Note: Supabase is managed service, no AWS resources needed
+   # This section documents the integration approach
 
-     engine         = "postgres"
-     engine_version = "13.7"
-     instance_class = "db.t2.micro"  # Free tier eligible
+   # Environment variables for services
+   variable "supabase_url" {
+     description = "Supabase project URL"
+     type        = string
+   }
 
-     allocated_storage     = 20
-     max_allocated_storage = 100
-     storage_encrypted     = false  # Free tier limitation
+   variable "supabase_anon_key" {
+     description = "Supabase anonymous key"
+     type        = string
+     sensitive   = true
+   }
 
-     db_name  = "predictive_maintenance"
-     username = var.db_username
-     password = var.db_password
-
-     vpc_security_group_ids = [aws_security_group.rds.id]
-     db_subnet_group_name   = aws_db_subnet_group.main.name
-
-     backup_retention_period = 7
-     backup_window          = "03:00-04:00"
-     maintenance_window     = "sun:04:00-sun:05:00"
-
-     tags = {
-       Name = "${var.project}-${var.environment}-database"
-     }
+   variable "supabase_service_role_key" {
+     description = "Supabase service role key"
+     type        = string
+     sensitive   = true
    }
    ```
 
 ### Deliverables
 
-- S3 bucket configured with lifecycle policies
-- RDS database running
-- Backup procedures documented
+- S3 bucket configured for ML data storage
+- Supabase integration documented
+- Environment variables configured
+- Data backup strategy for ML artifacts
 
 ---
 
