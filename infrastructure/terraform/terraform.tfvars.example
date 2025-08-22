@@ -1,0 +1,14 @@
+# Copy this file to terraform.tfvars and fill in your values
+
+# Project Configuration
+project     = "predictive-maintenance"
+environment = "free-tier"
+aws_region  = "us-east-1"
+
+# Supabase Configuration (get these from your Supabase project)
+supabase_url              = "https://your-project.supabase.co"
+supabase_anon_key         = "your-anon-key-here"
+supabase_service_role_key = "your-service-role-key-here"
+
+# SSH Key Configuration
+ssh_key_name = "predictive-maintenance-key"
