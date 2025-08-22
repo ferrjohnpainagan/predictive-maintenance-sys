@@ -21,6 +21,28 @@ This directory contains the Terraform configuration for deploying the predictive
 
 ## 🚀 Quick Start
 
+### Current Infrastructure Status
+
+**✅ Infrastructure Deployed Successfully!**
+
+| **Component**   | **Status**    | **Details**                                |
+| --------------- | ------------- | ------------------------------------------ |
+| **VPC**         | ✅ Running    | `vpc-0e405018dd7914d44` (Singapore)        |
+| **API Gateway** | ✅ Running    | `18.136.204.216:3000`                      |
+| **ML Service**  | ✅ Running    | `13.215.159.154:8000`                      |
+| **S3 Storage**  | ✅ Created    | `predictive-maintenance-free-tier-ml-data` |
+| **Monitoring**  | ✅ Configured | CloudWatch dashboard & alarms              |
+
+**Connection Commands:**
+
+```bash
+# API Gateway
+ssh -i ~/.ssh/predictive-maintenance-key ec2-user@18.136.204.216
+
+# ML Service
+ssh -i ~/.ssh/predictive-maintenance-key ec2-user@13.215.159.154
+```
+
 ### Prerequisites
 
 1. **AWS CLI configured** with your free tier account
@@ -78,6 +100,19 @@ terraform/
     ├── storage/            # S3 buckets
     └── monitoring/         # CloudWatch configuration
 ```
+
+## 📚 Documentation
+
+### Service Commands
+
+- **[Service Commands Reference](../docs/service-commands.md)** - Comprehensive command reference for API Gateway and ML Service
+- **[Quick Commands Card](../docs/quick-commands.md)** - Essential commands for daily operations
+
+### Infrastructure Management
+
+- **Terraform State**: Local state backend for development
+- **Module Documentation**: Each module includes its own README
+- **User Data Scripts**: Automated instance setup scripts
 
 ## 🔧 Modules
 
