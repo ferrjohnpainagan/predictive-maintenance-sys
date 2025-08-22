@@ -33,6 +33,10 @@ This document provides a comprehensive overview of all implementation plans for 
 **Duration**: 5-7 weeks  
 **Technology**: NestJS, TypeScript, Supabase, gRPC
 
+**Free Tier Alternative**: [Free Tier API Gateway Plan](../backend/api-gateway/docs/free-tier-implementation-plan.md)  
+**Duration**: 4-5 weeks  
+**Technology**: NestJS, TypeScript, Supabase (Free), EC2 t2.micro
+
 **Key Phases**:
 
 - Phase 1: Project Setup (2-3 days)
@@ -42,7 +46,7 @@ This document provides a comprehensive overview of all implementation plans for 
 - Phase 5: API Endpoints (5-6 days)
 - Phase 6: Performance Optimization (3-4 days)
 - Phase 7: Testing (4-5 days)
-- Phase 8: Deployment _(references [Infrastructure plan](../infrastructure/docs/implementation-plan.md))_
+- Phase 8: Production Deployment _(includes migration from free tier)_
 
 **Dependencies**: Infrastructure setup, ML service gRPC interface
 
@@ -54,6 +58,10 @@ This document provides a comprehensive overview of all implementation plans for 
 **Duration**: 6-7 weeks  
 **Technology**: Python, FastAPI, TensorFlow, gRPC, SageMaker
 
+**Free Tier Alternative**: [Free Tier ML Service Plan](../backend/ml-service/docs/free-tier-implementation-plan.md)  
+**Duration**: 3-4 weeks  
+**Technology**: Python, FastAPI, TensorFlow (CPU), gRPC, EC2 t2.micro
+
 **Key Phases**:
 
 - Phase 1: Project Setup (2-3 days)
@@ -63,9 +71,9 @@ This document provides a comprehensive overview of all implementation plans for 
 - Phase 5: Inference Service (4-5 days)
 - Phase 6: FastAPI REST Interface (3-4 days)
 - Phase 7: Testing (4-5 days)
-- Phase 8: Deployment _(references [Infrastructure plan](../infrastructure/docs/implementation-plan.md))_
+- Phase 8: Deployment _(includes migration from free tier)_
 
-**Dependencies**: Data pipeline, SageMaker setup, infrastructure
+**Dependencies**: Data pipeline, infrastructure
 
 ---
 
@@ -75,16 +83,20 @@ This document provides a comprehensive overview of all implementation plans for 
 **Duration**: 6-7 weeks  
 **Technology**: AWS SageMaker, MLflow, Pipelines
 
+**Free Tier Alternative**: [Free Tier MLOps Plan](../mlops/docs/free-tier-implementation-plan.md)  
+**Duration**: 3-4 weeks  
+**Technology**: Local MLflow, TensorFlow (CPU), EC2 t2.micro
+
 **Key Phases**:
 
-- Phase 1: SageMaker Environment Setup (3-4 days)
+- Phase 1: SageMaker Environment Setup (3-4 days) / MLOps Local Setup (3-4 days)
 - Phase 2: Data Processing _(references [Data Pipeline plan](../data/docs/implementation-plan.md))_
 - Phase 3: Model Training Pipeline (5-6 days)
 - Phase 4: Model Evaluation (3-4 days)
 - Phase 5: Model Registry & Deployment (4-5 days)
 - Phase 6: Pipeline Orchestration (4-5 days)
 - Phase 7: Model Monitoring _(references [Monitoring plan](../monitoring/docs/implementation-plan.md))_
-- Phase 8: Production Operations (3-4 days)
+- Phase 8: Production Operations _(includes migration from free tier)_
 
 **Dependencies**: AWS account, data pipeline, monitoring setup
 
@@ -95,6 +107,10 @@ This document provides a comprehensive overview of all implementation plans for 
 **Location**: [infrastructure/docs/implementation-plan.md](../infrastructure/docs/implementation-plan.md)  
 **Duration**: 4-6 weeks  
 **Technology**: Terraform, AWS, Docker, GitHub Actions
+
+**Free Tier Alternative**: [Free Tier Implementation Plan](../infrastructure/docs/free-tier-implementation-plan.md)  
+**Duration**: 2-3 weeks  
+**Technology**: Terraform, AWS Free Tier, EC2, GitHub Actions
 
 **Key Phases**:
 
@@ -135,6 +151,10 @@ This document provides a comprehensive overview of all implementation plans for 
 **Duration**: 3-4 weeks  
 **Technology**: CloudWatch, Grafana, X-Ray, Prometheus
 
+**Free Tier Alternative**: [Free Tier Monitoring Plan](../monitoring/docs/free-tier-implementation-plan.md)  
+**Duration**: 2-3 weeks  
+**Technology**: CloudWatch (Free), Simple logging, Basic alerting
+
 **Key Phases**:
 
 - Phase 1: Observability Foundation (3-4 days)
@@ -144,6 +164,49 @@ This document provides a comprehensive overview of all implementation plans for 
 - Phase 5: Dashboards & Visualization (3-4 days)
 
 **Dependencies**: Infrastructure setup, application services
+
+---
+
+## Implementation Strategy: Dual-Path Approach
+
+### 🆓 Free Tier Path (Recommended for Start)
+
+**Duration**: 2-3 weeks  
+**Cost**: $0/month for 12 months  
+**Objective**: Build and test complete system on AWS Free Tier
+
+**Key Benefits**:
+
+- **Zero Cost**: Stay within AWS free tier limits
+- **Full Functionality**: All features work on free tier
+- **Learning**: Understand system before scaling
+- **Risk Mitigation**: Test on free tier, deploy to production
+
+**Technology Stack**:
+
+- **Compute**: EC2 t2.micro instances (Free Tier eligible)
+- **Storage**: S3 (5GB free), RDS t2.micro (Free Tier eligible)
+- **Deployment**: Manual via SSH, GitHub Actions
+- **Monitoring**: Basic CloudWatch (Free Tier)
+
+### 🚀 Paid Services Path (Future Production)
+
+**Duration**: 4-6 weeks  
+**Cost**: ~$150-250/month  
+**Objective**: Production-grade infrastructure with auto-scaling
+
+**Technology Stack**:
+
+- **Compute**: ECS Fargate, Lambda
+- **Storage**: S3, RDS with encryption
+- **Deployment**: Automated CI/CD, Terraform Cloud
+- **Monitoring**: Advanced CloudWatch, X-Ray, Datadog
+
+### 🔄 Migration Path
+
+**Month 6-8**: Evaluate performance on free tier  
+**Month 9-10**: Prepare for migration (containerize, document)  
+**Month 12**: Execute migration to paid services
 
 ---
 
@@ -185,10 +248,11 @@ This document provides a comprehensive overview of all implementation plans for 
 
 #### Phase A: Foundation (Weeks 1-4)
 
-1. **Start with [Infrastructure as Code](../infrastructure/docs/implementation-plan.md)** (Week 1-2)
+1. **Start with [Free Tier Infrastructure](../infrastructure/docs/free-tier-implementation-plan.md)** (Week 1-2)
 
    - Critical foundation for all other services
-   - Provides AWS environment, networking, CI/CD
+   - Provides AWS environment, networking, basic CI/CD
+   - **Cost**: $0/month (within free tier limits)
 
 2. **Set up [Data Pipeline](../data/docs/implementation-plan.md)** (Week 2-3)
 
@@ -198,7 +262,7 @@ This document provides a comprehensive overview of all implementation plans for 
 3. **Begin [Monitoring Setup](../monitoring/docs/implementation-plan.md)** (Week 3-4)
 
    - Early monitoring helps debug other services
-   - Provides observability from day one
+   - Provides basic observability (free tier compatible)
 
 #### Phase B: Core Services (Weeks 3-8)
 
@@ -281,10 +345,17 @@ Infrastructure → Data Pipeline → MLOps → ML Service → API Gateway → Fr
 
 1. **Review all implementation plans** with respective teams
 2. **Set up project coordination structure** (standups, reviews)
-3. **Begin with Infrastructure as Code implementation**
+3. **Begin with [Free Tier Infrastructure](../infrastructure/docs/free-tier-implementation-plan.md)**
 4. **Establish shared repositories and documentation**
 5. **Create integration testing strategy**
-6. **Plan go-live and rollout procedures**
+6. **Plan migration to paid services (Month 12+)**
+
+**Immediate Action Items**:
+
+- Set up AWS Free Tier account
+- Initialize Terraform with local state
+- Deploy basic EC2 infrastructure
+- Test system functionality on free tier
 
 ---
 
