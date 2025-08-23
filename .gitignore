@@ -65,3 +65,15 @@ mlartifacts/
 # Backup files
 *.bak
 *.backup
+
+# Ignore processed/generated data files
+data/processed/*.parquet
+data/processed/*.csv
+data/processed/*.json
+
+# Ignore logs
+data/logs/*.log
+
+# But keep the directory structure
+!data/processed/.gitkeep
+!data/logs/.gitkeep
