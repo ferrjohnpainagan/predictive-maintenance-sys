@@ -6,10 +6,7 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 5.0"
     }
-    supabase = {
-      source  = "supabase/supabase"
-      version = "~> 1.0"
-    }
+
     vercel = {
       source  = "vercel/vercel"
       version = "~> 0.15"

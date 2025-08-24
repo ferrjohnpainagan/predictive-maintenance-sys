@@ -1,6 +1,6 @@
 # API Gateway EC2 Instance
 resource "aws_instance" "api_gateway" {
-  instance_type = "t2.micro"  # Free tier eligible
+  instance_type = "t3.micro"  # Free tier eligible in ap-southeast-1
   ami           = var.ami_id
 
   vpc_security_group_ids = [var.security_group_id]
@@ -21,7 +21,7 @@ resource "aws_instance" "api_gateway" {
 
 # ML Service EC2 Instance
 resource "aws_instance" "ml_service" {
-  instance_type = "t2.micro"  # Free tier eligible
+  instance_type = "t3.micro"  # Free tier eligible in ap-southeast-1
   ami           = var.ami_id
 
   vpc_security_group_ids = [var.security_group_id]

@@ -7,11 +7,7 @@ provider "aws" {
   }
 }
 
-# Configure Supabase Provider
-provider "supabase" {
-  url  = var.supabase_url
-  key  = var.supabase_service_role_key
-}
+
 
 # Configure Vercel Provider (for frontend deployment)
 provider "vercel" {
