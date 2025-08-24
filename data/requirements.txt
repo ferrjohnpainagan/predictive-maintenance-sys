@@ -1,0 +1,23 @@
+# Data Pipeline Requirements - Predictive Maintenance System
+# Free Tier Optimized Dependencies
+
+# Core Data Processing
+pandas==2.0.3
+numpy==1.24.3
+pyarrow==12.0.1  # For parquet file support
+
+# Database Connectivity
+supabase==2.0.2
+psycopg2-binary==2.9.9
+postgrest==0.13.0
+
+# Data Quality & Validation
+great-expectations==0.18.8
+
+# Utilities
+python-dotenv==1.0.0
+psutil==5.9.5  # For memory monitoring
+
+# Optional (for development/testing)
+pytest==7.4.3
+pytest-cov==4.1.0
