@@ -164,8 +164,8 @@ class TestCMAPSSLoaderIntegration:
     
     def test_full_data_pipeline(self):
         """Test complete data pipeline workflow"""
-        # Test data download/creation
-        assert self.loader.download_cmapss_data("data/raw")
+        # Test data download/creation (use default path)
+        assert self.loader.download_cmapss_data()
         
         # Test data loading
         train_data = self.loader.load_training_data()

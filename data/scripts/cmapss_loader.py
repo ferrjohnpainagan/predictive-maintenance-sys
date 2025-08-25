@@ -135,8 +135,9 @@ class CMAPSSLoader:
             
             # Generate data for each engine
             for engine_num in range(1, self.config.num_engines + 1):
-                # Random number of cycles for this engine (50-500)
-                max_cycles = np.random.randint(50, self.config.max_cycles + 1)
+                # Random number of cycles for this engine (adapt to config)
+                min_cycles = min(50, self.config.max_cycles // 2)
+                max_cycles = np.random.randint(min_cycles, self.config.max_cycles + 1)
                 
                 for cycle in range(1, max_cycles + 1):
                     # Operational settings (realistic ranges)
@@ -185,11 +186,14 @@ class CMAPSSLoader:
         """Generate sample test data"""
         try:
             # Similar to training data but with fewer engines
-            test_engines = min(20, self.config.num_engines // 5)
+            test_engines = max(1, min(20, self.config.num_engines // 5))
             
             data = []
             for engine_num in range(1, test_engines + 1):
-                max_cycles = np.random.randint(30, 100)
+                # Ensure valid range for test data
+                min_test_cycles = min(30, self.config.max_cycles // 3)
+                max_test_cycles = min(100, self.config.max_cycles)
+                max_cycles = np.random.randint(min_test_cycles, max_test_cycles + 1)
                 
                 for cycle in range(1, max_cycles + 1):
                     # Similar logic to training data
