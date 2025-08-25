@@ -61,6 +61,8 @@ jobs:
     - name: Run unit tests
       run: |
         cd data
+        # Create necessary directories for tests
+        mkdir -p logs data/processed data/raw data/exports data/streaming
         python -m pytest tests/ -v --cov=scripts --cov-report=xml --cov-report=term
     
     - name: Upload coverage reports

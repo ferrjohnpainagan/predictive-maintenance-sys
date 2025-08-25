@@ -18,6 +18,10 @@ from config.config import CMAPSSConfig, get_config
 
 def setup_logging(log_level: str = "INFO") -> logging.Logger:
     """Setup logging configuration"""
+    # Create logs directory if it doesn't exist
+    import os
+    os.makedirs('logs', exist_ok=True)
+    
     logging.basicConfig(
         level=getattr(logging, log_level.upper()),
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
