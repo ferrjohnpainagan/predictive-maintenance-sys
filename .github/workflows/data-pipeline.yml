@@ -163,7 +163,7 @@ jobs:
         python scripts/data_quality_validator.py
     
     - name: Upload quality reports
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: data-quality-reports
         path: data/logs/data_quality_report_*.txt
@@ -203,7 +203,7 @@ jobs:
         timeout 35s python scripts/streaming_processor.py --demo || true
     
     - name: Upload simulation logs
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: simulation-logs
@@ -256,7 +256,7 @@ jobs:
         python scripts/data_ingestion.py
     
     - name: Upload ingestion logs
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: ingestion-logs
