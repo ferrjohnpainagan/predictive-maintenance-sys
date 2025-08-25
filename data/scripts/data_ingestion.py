@@ -8,6 +8,7 @@ import os
 import sys
 import time
 from datetime import datetime
+from pathlib import Path
 from typing import Dict, Tuple
 
 import pandas as pd
@@ -50,6 +51,9 @@ class DataIngestionPipeline:
         self.cmapss_loader = CMAPSSLoader(self.config.cmapss)
         self.db_connector = SupabaseConnector(self.config.database)
         
+        # Set base directory (data/ directory)
+        self.base_dir = Path(__file__).parent.parent
+        
         # Pipeline metrics
         self.metrics = {
             'start_time': None,
@@ -62,9 +66,9 @@ class DataIngestionPipeline:
         }
         
         # Ensure directories exist
-        os.makedirs('logs', exist_ok=True)
-        os.makedirs('data/raw', exist_ok=True)
-        os.makedirs('data/processed', exist_ok=True)
+        os.makedirs(self.base_dir / 'logs', exist_ok=True)
+        os.makedirs(self.base_dir / 'raw', exist_ok=True)
+        os.makedirs(self.base_dir / 'processed', exist_ok=True)
     
     def run_full_pipeline(self) -> Tuple[bool, Dict]:
         """Run the complete data ingestion pipeline"""

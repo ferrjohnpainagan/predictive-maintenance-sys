@@ -90,3 +90,6 @@ data/logs/*.log
 # Deprecated/testing files (not part of main implementation)
 data/deprecated_files/
 deprecated_files/
+
+# Prevent nested data directories (avoid data/data/* structure)
+data/data/

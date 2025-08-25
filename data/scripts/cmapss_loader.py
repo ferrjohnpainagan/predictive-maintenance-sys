@@ -43,6 +43,9 @@ class CMAPSSLoader:
         self.config = config
         self.logger = logging.getLogger(__name__)
         
+        # Set base directory (data/ directory)
+        self.base_dir = Path(__file__).parent.parent
+        
         # Free tier optimizations
         self.batch_size = 500  # Optimized for t2.micro memory
         self.max_memory_mb = 512  # Stay within 1GB limit
@@ -54,14 +57,18 @@ class CMAPSSLoader:
         }
         
         # Ensure output directories exist
-        os.makedirs('data/raw', exist_ok=True)
-        os.makedirs('data/processed', exist_ok=True)
-        os.makedirs('logs', exist_ok=True)
+        os.makedirs(self.base_dir / 'raw', exist_ok=True)
+        os.makedirs(self.base_dir / 'processed', exist_ok=True)
+        os.makedirs(self.base_dir / 'logs', exist_ok=True)
     
-    def download_cmapss_data(self, output_dir: str = "data/raw") -> bool:
+    def download_cmapss_data(self, output_dir: str = None) -> bool:
         """Download or create sample C-MAPSS data"""
         try:
             self.logger.info("Starting C-MAPSS data download/creation...")
+            
+            # Use base directory if output_dir not specified
+            if output_dir is None:
+                output_dir = str(self.base_dir / 'raw')
             
             # Check if data already exists
             if self._check_existing_data(output_dir):
@@ -291,7 +298,7 @@ class CMAPSSLoader:
             self.logger.info(f"RUL data saved to {rul_file}")
             
             # Save processed data as parquet
-            output_file = os.path.join("data/processed", "training_data_processed.parquet")
+            output_file = self.base_dir / 'processed' / 'training_data_processed.parquet'
             train_data.to_parquet(output_file, compression='snappy')
             self.logger.info(f"Processed data saved to {output_file}")
             
@@ -303,7 +310,7 @@ class CMAPSSLoader:
         """Load training data with memory optimization"""
         try:
             if file_path is None:
-                file_path = os.path.join("data/raw", self.config.train_file)
+                file_path = str(self.base_dir / 'raw' / self.config.train_file)
             
             self.logger.info(f"Loading training data from {file_path}")
             
