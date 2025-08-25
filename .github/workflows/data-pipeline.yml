@@ -118,6 +118,9 @@ jobs:
         # Use local PostgreSQL for testing
         DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_predictive_maintenance
         ENVIRONMENT: development
+        # Supabase credentials for integration tests
+        SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+        SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
       run: |
         cd data
         python tests/test_integration.py
