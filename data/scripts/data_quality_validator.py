@@ -9,13 +9,19 @@ import sys
 from datetime import datetime
 from typing import Dict, List, Optional, Tuple
 
-import great_expectations as ge
 import numpy as np
 import pandas as pd
-from great_expectations.core import ExpectationSuite
-from great_expectations.core.batch import RuntimeBatchRequest
-from great_expectations.expectations.expectation_configuration import \
-    ExpectationConfiguration
+
+# Try importing Great Expectations with fallback
+try:
+    import great_expectations as ge
+    from great_expectations.core import ExpectationSuite
+    from great_expectations.core.expectation_configuration import ExpectationConfiguration
+    GE_AVAILABLE = True
+except ImportError:
+    logger = logging.getLogger(__name__)
+    logger.warning("Great Expectations not available, using pandas-only validation")
+    GE_AVAILABLE = False
 
 # Add parent directory to path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -51,6 +57,11 @@ class DataQualityValidator:
     
     def _initialize_ge_context(self):
         """Initialize Great Expectations context"""
+        if not GE_AVAILABLE:
+            logger.warning("Great Expectations not available, using pandas-only validation")
+            self.context = None
+            return
+            
         try:
             # Create a simple in-memory context (no persistence for free tier)
             self.context = ge.get_context()
@@ -60,8 +71,11 @@ class DataQualityValidator:
             logger.warning(f"Could not initialize GE context, using pandas validation: {e}")
             self.context = None
     
-    def create_expectation_suite(self) -> ExpectationSuite:
+    def create_expectation_suite(self):
         """Create expectation suite for C-MAPSS sensor data"""
+        if not GE_AVAILABLE:
+            return None
+            
         try:
             suite = ExpectationSuite(expectation_suite_name=self.suite_name)
             
@@ -246,7 +260,9 @@ class DataQualityValidator:
             
         except Exception as e:
             logger.error(f"Error creating expectation suite: {e}")
-            return ExpectationSuite(expectation_suite_name=self.suite_name)
+            if GE_AVAILABLE:
+                return ExpectationSuite(expectation_suite_name=self.suite_name)
+            return None
     
     def validate_dataframe(self, df: pd.DataFrame, suite_name: str = None) -> Dict:
         """Validate a pandas DataFrame using Great Expectations"""

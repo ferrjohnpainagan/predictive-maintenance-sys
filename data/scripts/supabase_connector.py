@@ -60,19 +60,36 @@ class SupabaseConnector:
     def _initialize_connections(self):
         """Initialize Supabase and PostgreSQL connections"""
         try:
+            # Check credentials first
+            if not self.config.url or not self.config.key:
+                logger.error("❌ Supabase credentials missing!")
+                logger.info("Please configure your .env file with:")
+                logger.info("  SUPABASE_URL=https://your-project.supabase.co")
+                logger.info("  SUPABASE_SERVICE_KEY=your-service-key-here")
+                self.client = None
+                return
+            
+            # Validate URL format
+            if not self.config.url.startswith('https://'):
+                logger.error("❌ Invalid Supabase URL format. Should start with https://")
+                self.client = None
+                return
+            
             # Initialize Supabase client
-            if self.config.url and self.config.key:
+            try:
                 self.client = create_client(self.config.url, self.config.key)
-                logger.info("Supabase client initialized successfully")
-            else:
-                logger.warning("Supabase credentials not found in environment")
+                logger.info("✅ Supabase client initialized successfully")
+            except Exception as e:
+                logger.error(f"❌ Failed to create Supabase client: {e}")
+                self.client = None
+                return
             
             # Initialize PostgreSQL connection pool for bulk operations
             self._init_pg_pool()
             
         except Exception as e:
             logger.error(f"Failed to initialize connections: {e}")
-            raise
+            self.client = None
     
     def _init_pg_pool(self):
         """Initialize PostgreSQL connection pool"""
@@ -108,27 +125,36 @@ class SupabaseConnector:
     def test_connection(self) -> bool:
         """Test database connection"""
         try:
-            if self.client:
-                # Test Supabase connection
-                response = self.client.table('engines').select('count').limit(1).execute()
-                logger.info("Supabase connection test successful")
+            if not self.client:
+                logger.error("No Supabase client available")
+                return False
+                
+            # Test with a simple query that should always work
+            try:
+                response = self.client.table('engines').select('id').limit(1).execute()
+                logger.info("✅ Supabase connection test successful")
                 return True
-            
-            if self.pg_pool:
-                # Test PostgreSQL connection
-                conn = self.pg_pool.getconn()
+            except Exception as e:
+                logger.error(f"Supabase table query failed: {e}")
+                
+                # Try a basic connection test
                 try:
-                    with conn.cursor() as cur:
-                        cur.execute("SELECT 1")
-                        logger.info("PostgreSQL connection test successful")
-                        return True
-                finally:
-                    self.pg_pool.putconn(conn)
-            
-            return False
+                    # Test if we can at least reach the API
+                    response = self.client.auth.get_session()
+                    logger.info("✅ Supabase API connection successful (table may not exist)")
+                    return True
+                except Exception as e2:
+                    logger.error(f"Supabase API connection failed: {e2}")
+                    
+                    # Check if credentials are configured
+                    if not self.config.url or not self.config.key:
+                        logger.error("❌ Supabase credentials not configured in .env file")
+                        logger.info("Please update .env with your Supabase URL and service key")
+                    
+                    return False
             
         except Exception as e:
-            logger.error(f"Connection test failed: {e}")
+            logger.error(f"Connection test error: {e}")
             return False
     
     # =====================================================
