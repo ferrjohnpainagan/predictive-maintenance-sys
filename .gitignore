@@ -65,3 +65,31 @@ mlartifacts/
 # Backup files
 *.bak
 *.backup
+
+# Ignore processed/generated data files
+data/processed/*.parquet
+data/processed/*.csv
+data/processed/*.json
+
+# Ignore logs
+data/logs/*.log
+
+# But keep the directory structure
+!data/processed/.gitkeep
+!data/logs/.gitkeep
+
+# Supabase
+.branches
+.temp
+
+# dotenvx
+.env.keys
+.env.local
+.env.*.local
+
+# Deprecated/testing files (not part of main implementation)
+data/deprecated_files/
+deprecated_files/
+
+# Prevent nested data directories (avoid data/data/* structure)
+data/data/

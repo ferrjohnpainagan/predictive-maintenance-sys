@@ -55,45 +55,33 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "18"
-          # TODO: Enable npm caching once backend/api-gateway/package-lock.json exists
-          # cache: "npm"
-          # cache-dependency-path: backend/api-gateway/package-lock.json
+          cache: "npm"
+          cache-dependency-path: backend/api-gateway/package-lock.json
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.11"
-          # TODO: Enable pip caching once mlops/requirements.txt exists
-          # cache: "pip"
-          # cache-dependency-path: mlops/requirements.txt
+          cache: "pip"
+          cache-dependency-path: mlops/requirements.txt
 
-      # TODO: Enable API Gateway build/test once backend/api-gateway code exists
-      # - name: Install API Gateway dependencies
-      #   working-directory: backend/api-gateway
-      #   run: |
-      #     npm ci
-      #     npm run lint
-      #     npm run test
-
-      # TODO: Enable ML Service build/test once mlops code exists
-      # - name: Install ML Service dependencies
-      #   working-directory: mlops
-      #   run: |
-      #     pip install -r requirements.txt
-      #     python -m pytest tests/ --cov=src/
-
-      # TODO: Enable security scanning once dependencies exist
-      # - name: Run security scan
-      #   run: |
-      #     npm audit --audit-level=moderate || true
-      #     safety check || true
-
-      # Temporary placeholder step to allow pipeline to continue
-      - name: Placeholder for build verification
+      - name: Install API Gateway dependencies
+        working-directory: backend/api-gateway
         run: |
-          echo "⚠️ Build and test steps are currently disabled"
-          echo "📝 TODO: Enable once application code is added"
-          echo "✅ Continuing with deployment pipeline..."
+          npm ci
+          npm run lint
+          npm run test
+
+      - name: Install ML Service dependencies
+        working-directory: mlops
+        run: |
+          pip install -r requirements.txt
+          python -m pytest tests/ --cov=src/
+
+      - name: Run security scan
+        run: |
+          npm audit --audit-level=moderate || true
+          safety check || true
 
   # Build Docker Images
   build-images:
@@ -113,36 +101,27 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # TODO: Enable API Gateway Docker build once backend/api-gateway/Dockerfile exists
-      # - name: Build API Gateway image
-      #   uses: docker/build-push-action@v5
-      #   with:
-      #     context: ./backend/api-gateway
-      #     push: true
-      #     tags: |
-      #       ${{ env.DOCKER_REGISTRY }}/api-gateway:${{ github.sha }}
-      #       ${{ env.DOCKER_REGISTRY }}/api-gateway:latest
-      #     cache-from: type=gha
-      #     cache-to: type=gha,mode=max
+      - name: Build API Gateway image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend/api-gateway
+          push: true
+          tags: |
+            ${{ env.DOCKER_REGISTRY }}/api-gateway:${{ github.sha }}
+            ${{ env.DOCKER_REGISTRY }}/api-gateway:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
-      # TODO: Enable ML Service Docker build once mlops/Dockerfile exists
-      # - name: Build ML Service image
-      #   uses: docker/build-push-action@v5
-      #   with:
-      #     context: ./mlops
-      #     push: true
-      #     tags: |
-      #       ${{ env.DOCKER_REGISTRY }}/ml-service:${{ github.sha }}
-      #       ${{ env.DOCKER_REGISTRY }}/ml-service:latest
-      #     cache-from: type=gha
-      #     cache-to: type=gha,mode=max
-
-      # Temporary placeholder for Docker build
-      - name: Placeholder for Docker builds
-        run: |
-          echo "⚠️ Docker build steps are currently disabled"
-          echo "📝 TODO: Enable once Dockerfiles are created"
-          echo "✅ Skipping to deployment manifest..."
+      - name: Build ML Service image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./mlops
+          push: true
+          tags: |
+            ${{ env.DOCKER_REGISTRY }}/ml-service:${{ github.sha }}
+            ${{ env.DOCKER_REGISTRY }}/ml-service:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       - name: Generate deployment manifest
         run: |
@@ -169,9 +148,7 @@ jobs:
   deploy-api-gateway:
     needs: build-images
     runs-on: ubuntu-latest
-    # TODO: Enable deployment once Docker images are being built
-    # if: ${{ github.event.inputs.services == 'all' || github.event.inputs.services == 'api-gateway' }}
-    if: false  # Temporarily disabled until Docker images are available
+    if: ${{ github.event.inputs.services == 'all' || github.event.inputs.services == 'api-gateway' }}
     steps:
       - name: Download deployment manifest
         uses: actions/download-artifact@v4
@@ -262,9 +239,7 @@ jobs:
   deploy-ml-service:
     needs: build-images
     runs-on: ubuntu-latest
-    # TODO: Enable deployment once Docker images are being built
-    # if: ${{ github.event.inputs.services == 'all' || github.event.inputs.services == 'ml-service' }}
-    if: false  # Temporarily disabled until Docker images are available
+    if: ${{ github.event.inputs.services == 'all' || github.event.inputs.services == 'ml-service' }}
     steps:
       - name: Download deployment manifest
         uses: actions/download-artifact@v4
@@ -362,42 +337,30 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: deployment-manifest
-        continue-on-error: true  # Allow to continue even if manifest doesn't exist
 
-      # TODO: Enable actual verification once services are deployed
-      # - name: Verify both services
-      #   run: |
-      #     echo "🔍 Verifying complete deployment..."
-      #
-      #     # Check API Gateway
-      #     echo "Checking API Gateway..."
-      #     if curl -f http://${{ env.EC2_API_GATEWAY_IP }}:3000/health; then
-      #       echo "✅ API Gateway: HEALTHY"
-      #     else
-      #       echo "❌ API Gateway: UNHEALTHY"
-      #       exit 1
-      #     fi
-      #
-      #     # Check ML Service
-      #     echo "Checking ML Service..."
-      #     if curl -f http://${{ env.EC2_ML_SERVICE_IP }}:8000/health; then
-      #       echo "✅ ML Service: HEALTHY"
-      #     else
-      #       echo "❌ ML Service: UNHEALTHY"
-      #       exit 1
-      #     fi
-      #
-      #     echo "🎉 All services deployed and healthy!"
-
-      # Temporary placeholder for verification
-      - name: Placeholder verification
+      - name: Verify both services
         run: |
-          echo "⚠️ Service verification is currently disabled"
-          echo "📝 TODO: Enable once services are actually deployed to EC2"
-          echo "ℹ️ Current configuration expects:"
-          echo "   - API Gateway at: ${{ env.EC2_API_GATEWAY_IP }}:3000"
-          echo "   - ML Service at: ${{ env.EC2_ML_SERVICE_IP }}:8000"
-          echo "✅ Skipping health checks for now..."
+          echo "🔍 Verifying complete deployment..."
+
+          # Check API Gateway
+          echo "Checking API Gateway..."
+          if curl -f http://${{ env.EC2_API_GATEWAY_IP }}:3000/health; then
+            echo "✅ API Gateway: HEALTHY"
+          else
+            echo "❌ API Gateway: UNHEALTHY"
+            exit 1
+          fi
+
+          # Check ML Service
+          echo "Checking ML Service..."
+          if curl -f http://${{ env.EC2_ML_SERVICE_IP }}:8000/health; then
+            echo "✅ ML Service: HEALTHY"
+          else
+            echo "❌ ML Service: UNHEALTHY"
+            exit 1
+          fi
+
+          echo "🎉 All services deployed and healthy!"
 
       - name: Generate deployment report
         if: success()
